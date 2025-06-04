@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css">
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+    <style>
+        
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Roboto:wght@300;500&display=swap');
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #f0f0f0;
+            font-family: 'Roboto', sans-serif;
+        }
+        .chat-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: rgba(30, 30, 30, 0.85);
+            padding: 20px;
+            border-radius: 20px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+            animation: slideIn 1s ease-in-out;
+        }
+        @keyframes slideIn {
+            0% { transform: translateY(40px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .chat-body {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: #0d6efd #2a2a2a;
+        }
+        .chat-body::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-body::-webkit-scrollbar-thumb {
+            background: #0d6efd;
+            border-radius: 4px;
+        }
+        .chat-message {
+            padding: 12px 18px;
+            margin: 10px 0;
+            border-radius: 16px;
+            max-width: 80%;
+            word-wrap: break-word;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .user {
+            background-color: #00b4db;
+            align-self: flex-end;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .bot {
+            background-color: #833ab4;
+            align-self: flex-start;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .chat-footer {
+            display: flex;
+            gap: 10px;
+        }
+        #message-input {
+            border-radius: 12px;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #send-button {
+            border-radius: 12px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            border: none;
+            transition: transform 0.2s ease;
+        }
+        #send-button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div id="textarea"></div>
+    <py-script src="python.py">
+
+        from flask import Flask, render_template, request, jsonify
+import google.generativeai as genai
+import os
+from pyscript import document
+GOOGLE_API_KEY = 'AIzaSyBcDaLranNZEuiaP58OZ0bgN46LgGtxh0E'
+genai.configure(api_key=GOOGLE_API_KEY)
+
+model = genai.GenerativeModel('gemini-1.5-flash')
+chat = model.start_chat(history=[])
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/chat', methods=['POST'])
+def chat_response():
+    user_input = request.json.get('message')
+    if not user_input:
+        return jsonify({"error": "No message provided"}), 400
+
+    try:
+        response_raw = chat.send_message(user_input)
+        response = response_raw.text
+        return jsonify({"response": response})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5001)  # change port if 5000 is in use
+    output_div=document.qureySelector("#textarea")
+    output_div.innerText=""
+    </py-script>
+    
+    <div class="chat-container">
+        <div class="chat-body" id="chat-body"></div>
+        <div class="chat-footer">
+            <input type="text" class="form-control" id="message-input" placeholder="Type a message...">
+            <button class="btn btn-primary" id="send-button">Send</button>
+        </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#send-button').click(function () {
+                sendMessage();
+            });
+
+            $('#message-input').keypress(function (e) {
+                if (e.which == 13) sendMessage();
+            });
+
+            function sendMessage() {
+                var userMessage = $('#message-input').val().trim();
+                if (userMessage) {
+                    $('#chat-body').append('<div class="chat-message user">' + userMessage + '</div>');
+                    $('#message-input').val("");
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/chat',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ message: userMessage }),
+                        success: function (data) {
+                            $('#chat-body').append('<div class="chat-message bot">' + data.response + '</div>');
+                            $('#chat-body').scrollTop($('#chat-body')[0].scrollHeight);
+                        },
+                        error: function (err) {
+                            $('#chat-body').append('<div class="chat-message bot">Hello how can i help You</div>');
+                        }
+                    });
+                }
+            }
+        })
+    </script>
+</body>
+</html>
