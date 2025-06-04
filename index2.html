@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flipkart Clone</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-blue: #2874f0;
+      --secondary-orange: #fb641b;
+      --accent-yellow: #ff9f00;
+      --light-gray: #f1f3f6;
+      --dark-gray: #878787;
+      --white: #ffffff;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background-color: var(--light-gray);
+      color: #212121;
+    }
+    
+    /* Header Styles */
+    .navbar {
+      display: flex;
+      align-items: center;
+      background-color: var(--primary-blue);
+      color: var(--white);
+      padding: 10px 5%;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: flex-end;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -1px;
+      margin-right: 16px;
+    }
+    
+    .logo span {
+      font-size: 11px;
+      font-style: italic;
+      color: #ffe500;
+      margin-left: 4px;
+    }
+    
+    .logo .explore {
+      color: var(--white);
+      font-size: 11px;
+      font-style: italic;
+      margin-left: 2px;
+    }
+    
+    .logo .plus {
+      color: #ffe500;
+      font-size: 10px;
+    }
+    
+    .search-box {
+      display: flex;
+      flex: 1;
+      max-width: 564px;
+      margin: 0 12px;
+      height: 36px;
+    }
+    
+    .search-box input {
+      width: 100%;
+      padding: 0 16px;
+      border: none;
+      border-radius: 2px 0 0 2px;
+      font-size: 14px;
+      outline: none;
+    }
+    
+    .search-box button {
+      background-color: var(--white);
+      border: none;
+      padding: 0 12px;
+      border-radius: 0 2px 2px 0;
+      cursor: pointer;
+      color: var(--primary-blue);
+    }
+    
+    .nav-links {
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-links a {
+      color: var(--white);
+      margin-left: 20px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    
+    .nav-links a i {
+      margin-right: 5px;
+    }
+    
+    .nav-links .login-btn {
+      background-color: var(--white);
+      color: var(--primary-blue);
+      padding: 5px 40px;
+      border-radius: 2px;
+      height: 32px;
+      font-weight: 500;
+    }
+    
+    /* Categories */
+    .categories {
+      background-color: var(--white);
+      padding: 12px 5%;
+      box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    
+    .categories::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .category-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 30px;
+      min-width: 80px;
+    }
+    
+    .category-item img {
+      width: 64px;
+      height: 64px;
+    }
+    
+    .category-item span {
+      font-size: 14px;
+      margin-top: 8px;
+      text-align: center;
+    }
+    
+    /* Banner */
+    .banner {
+      margin: 15px 5%;
+      height: 280px;
+      background-image: linear-gradient(to right, #f5f5f5, #fff);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    /* Products */
+    .container {
+      padding: 0 5%;
+      margin-bottom: 30px;
+    }
+    
+    .section-title {
+      font-size: 24px;
+      font-weight: 500;
+      margin: 20px 0;
+      color: #212121;
+    }
+    
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    
+    .product {
+      background: var(--white);
+      border-radius: 2px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+    
+    .product:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .product img {
+      max-width: 100%;
+      height: 160px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+    
+    .product h3 {
+      font-size: 14px;
+      font-weight: 500;
+      margin: 10px 0;
+      color: #212121;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .product .price {
+      color: #388e3c;
+      font-weight: 500;
+      margin: 8px 0;
+      font-size: 16px;
+    }
+    
+    .product .original-price {
+      color: var(--dark-gray);
+      text-decoration: line-through;
+      font-size: 14px;
+      margin-right: 8px;
+    }
+    
+    .product .discount {
+      color: #388e3c;
+      font-size: 13px;
+    }
+    
+    .product .rating {
+      background-color: #388e3c;
+      color: var(--white);
+      font-size: 12px;
+      padding: 2px 4px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    
+    .product button {
+      width: 100%;
+      padding: 8px;
+      background-color: var(--accent-yellow);
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      color: var(--white);
+      font-weight: 500;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    .product button:hover {
+      background-color: #ffa81e;
+    }
+    
+    /* Footer */
+    footer {
+      background-color: #172337;
+      color: var(--white);
+      padding: 40px 5% 20px;
+    }
+    
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    
+    .footer-column h3 {
+      font-size: 12px;
+      color: #878787;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    
+    .footer-column ul {
+      list-style: none;
+    }
+    
+    .footer-column ul li {
+      margin-bottom: 8px;
+    }
+    
+    .footer-column ul li a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 12px;
+    }
+    
+    .footer-bottom {
+      border-top: 1px solid #454d5e;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #878787;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">
+      Flipkart<span class="explore">Explore<span class="plus">+</span></span>
+    </div>
+    <div class="search-box">
+      <input type="text" placeholder="Search for products, brands and more">
+      <button><i class="fas fa-search"></i></button>
+    </div>
+    <div class="nav-links">
+      <a href="#" class="login-btn">Login</a>
+      <a href="#">More <i class="fas fa-chevron-down"></i></a>
+      <a href="#"><i class="fas fa-shopping-cart"></i> Cart</a>
+    </div>
+  </header>
+
+  <div class="categories">
+    <div class="category-item">
+      <img src="https://rukminim2.flixcart.com/flap/128/128/image/29327f40e9c4d26b.png" alt="Grocery">
+      <span>Grocery</span>
+    </div>
+    <div class="category-item">
+      <img src="https://rukminim2.flixcart.com/flap/128/128/image/22fddf3c7da4c4f4.png" alt="Mobiles">
+      <span>Mobiles</span>
+    </div>
+    <div class="category-item">
+      <img src="https://rukminim2.flixcart.com/fk-p-flap/128/128/image/0d75b34f7d8fbcb3.png" alt="Fashion">
+      <span>Fashion</span>
+    </div>
+    <div class="category-item">
+      <img src="https://rukminim2.flixcart.com/flap/128/128/image/69c6589653afdb9a.png" alt="Electronics">
+      <span>Electronics</span>
+    </div>
+    <div class="category-item">
+      <img src="https://rukminim2.flixcart.com/flap/128/128/image/ab7e2b022a4587dd.jpg" alt="Home">
+      <span>Home</span>
+    </div>
+    <div class="category-item">
+      <img src="https://rukminim2.flixcart.com/flap/128/128/image/0ff199d1bd27eb98.png" alt="Appliances">
+      <span>Appliances</span>
+    </div>
+    <div class="category-item">
+      <img src="https://rukminim2.flixcart.com/flap/128/128/image/71050627a56b4693.png" alt="Travel">
+      <span>Travel</span>
+    </div>
+    <div class="category-item">
+      <img src="https://rukminim2.flixcart.com/flap/128/128/image/dff3f7adcf3a90c6.png" alt="Toys">
+      <span>Toys & More</span>
+    </div>
+  </div>
+
+  <div class="banner">
+    <img src="https://rukminim2.flixcart.com/fk-p-flap/1600/270/image/4ddb1a1a3f664b2f.jpg" alt="Banner">
+  </div>
+
+  <div class="container">
+    <h2 class="section-title">Deals of the Day</h2>
+    <div class="product-grid" id="deals-list"></div>
+  </div>
+
+  <div class="container">
+    <h2 class="section-title">Trending Products</h2>
+    <div class="product-grid" id="trending-list"></div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-column">
+        <h3>About</h3>
+        <ul>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Flipkart Stories</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Help</h3>
+        <ul>
+          <li><a href="#">Payments</a></li>
+          <li><a href="#">Shipping</a></li>
+          <li><a href="#">Cancellation & Returns</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Policy</h3>
+        <ul>
+          <li><a href="#">Return Policy</a></li>
+          <li><a href="#">Terms Of Use</a></li>
+          <li><a href="#">Security</a></li>
+          <li><a href="#">Privacy</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Social</h3>
+        <ul>
+          <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+          <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+          <li><a href="#"><i class="fab fa-youtube"></i> YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2023 Flipkart Clone. All rights reserved.</div>
+      <div>Made with ❤️ in India</div>
+    </div>
+  </footer>
+
+  <script>
+    const deals = [
+      { 
+        id: 1, 
+        name: "Realme Narzo N55 (Prime Blue, 64 GB)", 
+        price: 10999, 
+        originalPrice: 12999, 
+        discount: "15% off", 
+        rating: "4.2", 
+        image: "https://rukminim2.flixcart.com/image/416/416/xif0q/mobile/6/n/d/-original-imagpg48f7azh4hu.jpeg" 
+      },
+      { 
+        id: 2, 
+        name: "boAt Airdopes 141 Bluetooth Headset", 
+        price: 1299, 
+        originalPrice: 1999, 
+        discount: "35% off", 
+        rating: "4.1", 
+        image: "https://rukminim2.flixcart.com/image/416/416/kp5sya80/headphone/n/u/a/141-boat-original-imag3es5zue5b5tg.jpeg" 
+      },
+      { 
+        id: 3, 
+        name: "HP 15s, 11th Gen Intel Core i3", 
+        price: 36990, 
+        originalPrice: 45990, 
+        discount: "20% off", 
+        rating: "4.3", 
+        image: "https://rukminim2.flixcart.com/image/416/416/ku04o7k0/computer/z/b/e/15s-eq2143au-thin-and-light-laptop-hp-original-imag77x9qg3kegzh.jpeg" 
+      },
+      { 
+        id: 4, 
+        name: "American Tourister 32 Ltrs Black", 
+        price: 1999, 
+        originalPrice: 3499, 
+        discount: "43% off", 
+        rating: "4.0", 
+        image: "https://rukminim2.flixcart.com/image/416/416/knyxqq80/school-bag/8/r/q/32-ltrs-amt-fizz-obl-02-american-tourister-original-imag2gkyg4kz9zjg.jpeg" 
+      },
+      { 
+        id: 5, 
+        name: "Mi 108 cm (43 inches) 4K Ultra HD", 
+        price: 26999, 
+        originalPrice: 34999, 
+        discount: "23% off", 
+        rating: "4.4", 
+        image: "https://rukminim2.flixcart.com/image/416/416/l0sgyvk0/television/z/a/z/l43m7-ai-mi-original-imagc8ghzgtgzhgz.jpeg" 
+      }
+    ];
+
+    const trending = [
+      { 
+        id: 6, 
+        name: "OnePlus Nord CE 3 Lite 5G (Pastel Lime, 128 GB)", 
+        price: 18999, 
+        originalPrice: 22999, 
+        discount: "17% off", 
+        rating: "4.3", 
+        image: "https://rukminim2.flixcart.com/image/416/416/xif0q/mobile/0/8/o/-original-imagpgx48fqznbjg.jpeg" 
+      },
+      { 
+        id: 7, 
+        name: "Noise ColorFit Pulse Grand Smart Watch", 
+        price: 1799, 
+        originalPrice: 2999, 
+        discount: "40% off", 
+        rating: "4.0", 
+        image: "https://rukminim2.flixcart.com/image/416/416/xif0q/watch/j/z/n/-original-imaggbr3j5zzbzfy.jpeg" 
+      },
+      { 
+        id: 8, 
+        name: "Dell 14 Laptop, Intel Core i3-1115G4", 
+        price: 31990, 
+        originalPrice: 39990, 
+        discount: "20% off", 
+        rating: "4.2", 
+        image: "https://rukminim2.flixcart.com/image/416/416/xif0q/computer/5/z/d/-original-imaggj6y5jq9jzfn.jpeg" 
+      },
+      { 
+        id: 9, 
+        name: "Fastrack Limitless FS1 Smart Watch", 
+        price: 1499, 
+        originalPrice: 2495, 
+        discount: "40% off", 
+        rating: "4.1", 
+        image: "https://rukminim2.flixcart.com/image/416/416/xif0q/watch/6/2/q/-original-imagg9j4xzkkz9ku.jpeg" 
+      },
+      { 
+        id: 10, 
+        name: "Samsung Galaxy M14 5G (ICY Silver, 128 GB)", 
+        price: 13490, 
+        originalPrice: 16990, 
+        discount: "21% off", 
+        rating: "4.2", 
+        image: "https://rukminim2.flixcart.com/image/416/416/xif0q/mobile/1/o/d/-original-imagtyiimyyxhhpk.jpeg" 
+      }
+    ];
+
+    function renderProducts(products, elementId) {
+      const list = document.getElementById(elementId);
+      list.innerHTML = '';
+      
+      products.forEach(product => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" loading="lazy">
+          <h3>${product.name}</h3>
+          <div class="rating">${product.rating} <i class="fas fa-star"></i></div>
+          <div class="price">
+            <span class="original-price">₹${product.originalPrice}</span>
+            ₹${product.price}
+            <span class="discount">${product.discount}</span>
+          </div>
+          <button>Add to Cart</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    // Render products on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts(deals, 'deals-list');
+      renderProducts(trending, 'trending-list');
+    });
+  </script>
+</body>
+</html>
